@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import { getRecommendations } from '../services/geminiService';
 import { Song } from '../types';
 import { Icon } from '../components/Icon';
 
@@ -14,44 +12,30 @@ interface SearchProps {
 export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, isOffline }) => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [aiMessage, setAiMessage] = useState<string | null>(null);
   const [results, setResults] = useState<Song[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
 
     setIsLoading(true);
-    setAiMessage(null);
+    setHasSearched(true);
     
-    // Filter by title, bible reference, OR DESCRIPTION
-    const basicResults = songs.filter(s => 
-      s.title.toLowerCase().includes(query.toLowerCase()) || 
-      s.bibleReference.toLowerCase().includes(query.toLowerCase()) ||
-      (s.description && s.description.toLowerCase().includes(query.toLowerCase()))
-    );
-    setResults(basicResults);
-
-    // Then ask AI for semantic recommendations
-    try {
-      const aiResponse = await getRecommendations(query);
-      setAiMessage(aiResponse.message);
-      
-      // Map IDs back to full song objects from the DYNAMIC list
-      const aiSongs = aiResponse.songIds
-        .map(id => songs.find(s => s.id === id))
-        .filter((s): s is Song => !!s);
-      
-      // Merge results, removing duplicates
-      const uniqueIds = new Set(basicResults.map(s => s.id));
-      const newSongs = aiSongs.filter(s => !uniqueIds.has(s.id));
-      setResults(prev => [...prev, ...newSongs]);
-
-    } catch (err) {
-      console.error("Erro no DJ:", err);
-    } finally {
-      setIsLoading(false);
-    }
+    // Simulating a small delay for UX (optional)
+    setTimeout(() => {
+        // Filter by title, bible reference, OR DESCRIPTION
+        const basicResults = songs.filter(s => 
+          s.title.toLowerCase().includes(query.toLowerCase()) || 
+          s.bibleReference.toLowerCase().includes(query.toLowerCase()) ||
+          (s.description && s.description.toLowerCase().includes(query.toLowerCase()))
+        );
+        setResults(basicResults);
+        setIsLoading(false);
+    }, 300);
   };
 
   if (isOffline) {
@@ -62,7 +46,7 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, 
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Você está Offline</h2>
         <p className="text-zinc-400 max-w-md mb-8">
-          O DJ AI precisa de internet para funcionar. Desative o modo offline para buscar novas modas.
+          A busca funciona apenas na sua biblioteca local no modo offline. Vá para "Sua Biblioteca" para ver o que você baixou.
         </p>
       </div>
     );
@@ -78,7 +62,7 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, 
           <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-zinc-400" />
           <input
             type="text"
-            placeholder="Busque por versículo, tema ou peça uma recomendação..."
+            placeholder="Busque por título, versículo ou tema..."
             className="w-full bg-white text-black rounded-full py-3 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-green-500 font-medium"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -88,22 +72,9 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, 
              disabled={isLoading}
              className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white px-4 py-1.5 rounded-full text-sm font-bold hover:bg-green-700 disabled:opacity-50"
           >
-            {isLoading ? 'Pensando...' : 'Buscar'}
+            {isLoading ? 'Buscando...' : 'Buscar'}
           </button>
         </form>
-
-        {/* AI Message Bubble */}
-        {aiMessage && (
-          <div className="mb-8 flex gap-4 animate-fade-in">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-green-400 to-blue-500 flex items-center justify-center flex-shrink-0">
-               <Icon name="sparkles" className="text-white w-6 h-6" />
-            </div>
-            <div className="bg-zinc-800 p-4 rounded-r-xl rounded-bl-xl border border-zinc-700">
-              <p className="text-green-400 font-bold text-xs mb-1 uppercase tracking-wider">DJ Bíblia Sertaneja</p>
-              <p className="text-zinc-200">{aiMessage}</p>
-            </div>
-          </div>
-        )}
 
         {/* Results List */}
         <div className="space-y-2">
@@ -142,7 +113,13 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, 
               </div>
             ))
           ) : (
-            !isLoading && query && <div className="text-center text-zinc-500 mt-10">Nenhum louvor encontrado.</div>
+            !isLoading && hasSearched && (
+              <div className="text-center text-zinc-500 mt-10 py-10 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed">
+                 <Icon name="search" className="w-12 h-12 mx-auto mb-2 text-zinc-600" />
+                 <p className="font-medium">Nenhum louvor encontrado para "{query}".</p>
+                 <p className="text-xs mt-1">Tente buscar pelo livro da Bíblia ou parte do título.</p>
+              </div>
+            )
           )}
         </div>
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Playlist, Song } from '../types';
 import { Icon } from '../components/Icon';
@@ -6,13 +7,14 @@ interface LibraryProps {
   songs: Song[];
   playlists: Playlist[];
   onPlayPlaylist: (playlist: Playlist) => void;
+  onPlayWithLyrics: (song: Song) => void;
   onCreatePlaylist: () => void;
   onDeletePlaylist: (id: string) => void;
   isOffline: boolean;
   downloadedSongs: Set<string>;
 }
 
-export const Library: React.FC<LibraryProps> = ({ songs: allSongs, playlists, onPlayPlaylist, onCreatePlaylist, onDeletePlaylist, isOffline, downloadedSongs }) => {
+export const Library: React.FC<LibraryProps> = ({ songs: allSongs, playlists, onPlayPlaylist, onPlayWithLyrics, onCreatePlaylist, onDeletePlaylist, isOffline, downloadedSongs }) => {
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
 
   // Helper to get full song details from IDs
@@ -99,8 +101,19 @@ export const Library: React.FC<LibraryProps> = ({ songs: allSongs, playlists, on
                       </td>
                       <td className="py-3 hidden md:table-cell text-zinc-500">{song.bibleReference}</td>
                       <td className="py-3 text-right font-mono pr-2">
-                         {downloadedSongs.has(song.id) && <Icon name="downloaded" className="w-4 h-4 text-green-500 inline mr-2" />}
-                         {Math.floor(song.duration / 60)}:{String(song.duration % 60).padStart(2, '0')}
+                         <div className="flex items-center justify-end gap-3">
+                            {song.lyrics && (
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); onPlayWithLyrics(song); }}
+                                    className="text-zinc-500 hover:text-white opacity-0 group-hover:opacity-100 transition"
+                                    title="Ver Letra"
+                                >
+                                    <Icon name="mic" className="w-4 h-4" />
+                                </button>
+                            )}
+                            {downloadedSongs.has(song.id) && <Icon name="downloaded" className="w-4 h-4 text-green-500 inline" />}
+                            <span>{Math.floor(song.duration / 60)}:{String(song.duration % 60).padStart(2, '0')}</span>
+                         </div>
                       </td>
                     </tr>
                   )

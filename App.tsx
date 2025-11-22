@@ -1,7 +1,9 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { PlaybackState, Song, Playlist, Album } from './types';
 import { Sidebar } from './components/Sidebar';
 import { Player } from './components/Player';
+import { BottomNav } from './components/BottomNav';
 import { Home } from './pages/Home';
 import { Search } from './pages/Search';
 import { Library } from './pages/Library';
@@ -19,6 +21,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [volume, setVolume] = useState(0.7);
   const [progress, setProgress] = useState(0);
+  
+  // Lyrics State (Global)
+  const [showLyrics, setShowLyrics] = useState(false);
   
   // Playlist State
   const [playlists, setPlaylists] = useState<Playlist[]>(INITIAL_PLAYLISTS);
@@ -44,6 +49,14 @@ export default function App() {
       setCurrentSong(song);
       setPlaybackState(PlaybackState.PLAYING);
       setProgress(0);
+    }
+  };
+
+  // Play song and immediately open lyrics
+  const handlePlayWithLyrics = (song: Song) => {
+    handlePlaySong(song);
+    if (song.lyrics) {
+      setShowLyrics(true);
     }
   };
 
@@ -102,15 +115,17 @@ export default function App() {
   };
 
   const toggleDownload = (songId: string) => {
-    setDownloadedSongs(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(songId)) {
-        newSet.delete(songId);
-      } else {
-        newSet.add(songId);
-      }
-      return newSet;
-    });
+    return () => {
+      setDownloadedSongs(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(songId)) {
+          newSet.delete(songId);
+        } else {
+          newSet.add(songId);
+        }
+        return newSet;
+      });
+    };
   };
 
   // Playlist Management Logic
@@ -198,7 +213,7 @@ export default function App() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar (Desktop) */}
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
@@ -207,21 +222,25 @@ export default function App() {
       />
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 w-full bg-black z-40 p-4 flex justify-between items-center border-b border-zinc-900">
-         <h1 className="text-xl font-bold text-green-500">Bíblia Sertaneja</h1>
+      <div className="md:hidden fixed top-0 w-full bg-black/90 backdrop-blur-md z-40 p-4 flex justify-between items-center border-b border-zinc-900">
+         <h1 className="text-xl font-bold text-green-500 tracking-tighter flex items-center gap-2">
+           <Icon name="play" className="w-5 h-5" />
+           Bíblia Sertaneja
+         </h1>
          <button onClick={() => setIsOfflineMode(!isOfflineMode)} className={`${isOfflineMode ? 'text-green-500' : 'text-zinc-500'}`}>
             <Icon name="download" />
          </button>
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 relative pt-14 md:pt-0">
+      <main className="flex-1 relative pt-16 md:pt-0 pb-20 md:pb-0 h-full overflow-hidden">
         {activeTab === 'home' && (
           <Home 
             songs={allSongs}
             albums={allAlbums}
             playlists={playlists}
-            onPlay={handlePlaySong} 
+            onPlay={handlePlaySong}
+            onPlayWithLyrics={handlePlayWithLyrics} 
             onAddToPlaylist={openAddToPlaylistModal}
             isOffline={isOfflineMode}
             downloadedSongs={downloadedSongs}
@@ -231,6 +250,7 @@ export default function App() {
           <Search 
             songs={allSongs}
             onPlay={handlePlaySong} 
+            onPlayWithLyrics={handlePlayWithLyrics}
             onAddToPlaylist={openAddToPlaylistModal}
             isOffline={isOfflineMode}
           />
@@ -240,6 +260,7 @@ export default function App() {
             songs={allSongs}
             playlists={playlists} 
             onPlayPlaylist={handlePlayPlaylist}
+            onPlayWithLyrics={handlePlayWithLyrics}
             onCreatePlaylist={createPlaylist}
             onDeletePlaylist={deletePlaylist}
             isOffline={isOfflineMode}
@@ -272,33 +293,38 @@ export default function App() {
         toggleOfflineMode={() => setIsOfflineMode(!isOfflineMode)}
         downloadedSongs={downloadedSongs}
         toggleDownload={toggleDownload}
+        showLyrics={showLyrics}
+        toggleLyrics={() => setShowLyrics(!showLyrics)}
       />
+
+      {/* Bottom Navigation (Mobile) */}
+      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Playlist Modal */}
       {showPlaylistModal && songToAddToPlaylist && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center">
-           <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md border border-zinc-800">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+           <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md border border-zinc-800 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
                  <h3 className="text-xl font-bold text-white">Adicionar à Playlist</h3>
                  <button onClick={() => setShowPlaylistModal(false)} className="text-zinc-400 hover:text-white"><Icon name="close" /></button>
               </div>
               
               <div className="flex items-center gap-3 mb-6 bg-zinc-800 p-2 rounded">
-                 <img src={songToAddToPlaylist.coverUrl} className="w-12 h-12 rounded" />
-                 <div>
-                    <p className="text-sm font-bold">{songToAddToPlaylist.title}</p>
-                    <p className="text-xs text-zinc-400">{songToAddToPlaylist.artist}</p>
+                 <img src={songToAddToPlaylist.coverUrl} className="w-12 h-12 rounded object-cover" />
+                 <div className="overflow-hidden">
+                    <p className="text-sm font-bold truncate">{songToAddToPlaylist.title}</p>
+                    <p className="text-xs text-zinc-400 truncate">{songToAddToPlaylist.bibleReference}</p>
                  </div>
               </div>
 
-              <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
+              <div className="space-y-2 max-h-60 overflow-y-auto mb-4 scrollbar-hide">
                  {playlists.map(p => (
                    <button 
                     key={p.id}
                     onClick={() => addSongToPlaylist(p.id)}
-                    className="w-full text-left px-4 py-3 bg-zinc-800/50 hover:bg-zinc-800 rounded flex items-center justify-between group"
+                    className="w-full text-left px-4 py-3 bg-zinc-800/50 hover:bg-zinc-800 rounded flex items-center justify-between group transition"
                    >
-                      <span className="font-medium text-sm">{p.title}</span>
+                      <span className="font-medium text-sm text-zinc-200">{p.title}</span>
                       {p.songs.includes(songToAddToPlaylist.id) && <Icon name="check" className="w-4 h-4 text-green-500" />}
                    </button>
                  ))}
@@ -309,9 +335,9 @@ export default function App() {
                   const newP = createPlaylist();
                   addSongToPlaylist(newP.id);
                 }}
-                className="w-full py-3 border border-zinc-700 rounded text-sm font-bold hover:bg-zinc-800 transition"
+                className="w-full py-3 border border-zinc-700 rounded text-sm font-bold hover:bg-zinc-800 transition text-green-500"
               >
-                Nova Playlist
+                + Nova Playlist
               </button>
            </div>
         </div>

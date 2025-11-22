@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconProps {
-  name: 'home' | 'search' | 'library' | 'play' | 'pause' | 'next' | 'prev' | 'heart' | 'download' | 'downloaded' | 'volume' | 'menu' | 'sparkles' | 'lock' | 'plus' | 'check' | 'list' | 'close' | 'trash' | 'settings' | 'upload' | 'chart' | 'edit' | 'image' | 'music' | 'mic' | 'share';
+  name: 'home' | 'search' | 'library' | 'play' | 'pause' | 'next' | 'prev' | 'heart' | 'download' | 'downloaded' | 'volume' | 'menu' | 'sparkles' | 'lock' | 'plus' | 'check' | 'list' | 'close' | 'trash' | 'settings' | 'upload' | 'chart' | 'edit' | 'image' | 'music' | 'mic' | 'share' | 'chevron-down' | 'shuffle' | 'repeat';
   className?: string;
 }
 
@@ -59,6 +59,12 @@ export const Icon: React.FC<IconProps> = ({ name, className = "w-6 h-6" }) => {
       return <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>;
     case 'share':
       return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>;
+    case 'chevron-down':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>;
+    case 'shuffle':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" /></svg>;
+    case 'repeat':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>;
     default:
       return <div />;
   }

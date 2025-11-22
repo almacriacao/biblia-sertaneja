@@ -51,4 +51,7 @@ export interface PlayerContextType {
   toggleOfflineMode: () => void;
   downloadedSongs: Set<string>;
   toggleDownload: (songId: string) => void;
+  // Lyrics Control
+  showLyrics: boolean;
+  toggleLyrics: () => void;
 }

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Song } from '../types';
 import { Icon } from '../components/Icon';
@@ -5,11 +6,12 @@ import { Icon } from '../components/Icon';
 interface SearchProps {
   songs: Song[];
   onPlay: (song: Song) => void;
+  onPlayWithLyrics: (song: Song) => void;
   onAddToPlaylist: (song: Song) => void;
   isOffline: boolean;
 }
 
-export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, isOffline }) => {
+export const Search: React.FC<SearchProps> = ({ songs, onPlay, onPlayWithLyrics, onAddToPlaylist, isOffline }) => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<Song[]>([]);
@@ -102,13 +104,25 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onAddToPlaylist, 
                 </div>
                 
                 <div className="hidden md:block text-sm text-zinc-500 mr-8">{song.album}</div>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); onAddToPlaylist(song); }}
-                  className="text-zinc-500 hover:text-white p-2 mr-4"
-                  title="Adicionar à playlist"
-                >
-                  <Icon name="plus" className="w-5 h-5" />
-                </button>
+                
+                <div className="flex items-center gap-2">
+                    {song.lyrics && (
+                        <button 
+                            onClick={(e) => { e.stopPropagation(); onPlayWithLyrics(song); }}
+                            className="text-zinc-500 hover:text-white p-2"
+                            title="Ver Letra"
+                        >
+                            <Icon name="mic" className="w-5 h-5" />
+                        </button>
+                    )}
+                    <button 
+                    onClick={(e) => { e.stopPropagation(); onAddToPlaylist(song); }}
+                    className="text-zinc-500 hover:text-white p-2 mr-4"
+                    title="Adicionar à playlist"
+                    >
+                    <Icon name="plus" className="w-5 h-5" />
+                    </button>
+                </div>
                 <div className="text-sm text-zinc-500 whitespace-nowrap">{Math.floor(song.duration / 60)}:{String(song.duration % 60).padStart(2, '0')}</div>
               </div>
             ))

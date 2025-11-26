@@ -1,44 +1,42 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface LogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  showText?: boolean;
+  showText?: boolean; // Prop kept for compatibility but ignored
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = "", size = 'md', showText = true }) => {
-  
+export const Logo: React.FC<LogoProps> = ({ className = "", size = 'md' }) => {
+  const [hasError, setHasError] = useState(false);
+
+  // Adjusted heights to accommodate a full logo (symbol + text)
   const sizeClasses = {
-    sm: { icon: 'h-6', text: 'text-lg' },
-    md: { icon: 'h-10', text: 'text-2xl' },
-    lg: { icon: 'h-16', text: 'text-4xl' },
-    xl: { icon: 'h-24', text: 'text-6xl' }
+    sm: 'h-8', 
+    md: 'h-12',
+    lg: 'h-20',
+    xl: 'h-32'
   };
 
-  const currentSize = sizeClasses[size];
+  const heightClass = sizeClasses[size];
+
+  if (hasError) {
+    return (
+      <div className={`flex flex-col items-center justify-center border border-red-500 bg-red-900/20 text-red-500 p-2 text-[10px] font-mono rounded ${className}`}>
+        <span>LOGO.PNG NÃO ENCONTRADO</span>
+        <span className="opacity-50">Verifique a pasta public</span>
+      </div>
+    );
+  }
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      {/* 
-        Exibe o arquivo logo.png localizado na pasta public/ do projeto.
-        Nenhum filtro de cor é aplicado, mantendo o Branco e Verde originais.
-      */}
+    <div className={`flex items-center justify-center ${className}`}>
       <img 
         src="/logo.png" 
         alt="Bíblia Sertaneja" 
-        className={`${currentSize.icon} w-auto object-contain`}
+        className={`${heightClass} w-auto object-contain`}
+        onError={() => setHasError(true)}
       />
-
-      {/* 
-        Mantemos o texto ao lado caso o PNG seja apenas o símbolo.
-        Se o PNG já tiver o texto escrito, você pode me avisar para removermos essa parte.
-      */}
-      {showText && (
-        <span className={`font-black text-green-500 tracking-tighter uppercase ${currentSize.text}`} style={{ fontFamily: 'sans-serif' }}>
-          Sertaneja
-        </span>
-      )}
     </div>
   );
 };

@@ -205,19 +205,17 @@ export default function App() {
   };
 
   const toggleDownload = (songId: string) => {
-    return () => {
-      requireUser(() => {
-        setDownloadedSongs(prev => {
-          const newSet = new Set(prev);
-          if (newSet.has(songId)) {
-            newSet.delete(songId);
-          } else {
-            newSet.add(songId);
-          }
-          return newSet;
-        });
+    requireUser(() => {
+      setDownloadedSongs(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(songId)) {
+          newSet.delete(songId);
+        } else {
+          newSet.add(songId);
+        }
+        return newSet;
       });
-    };
+    });
   };
 
   const toggleFavorite = (songId: string) => {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PlayerContextType, PlaybackState } from '../types';
 import { Icon } from './Icon';
@@ -133,7 +132,7 @@ export const Player: React.FC<PlayerProps> = ({
                     <span className="text-[10px] uppercase tracking-wider">Zap</span>
                  </button>
 
-                 <button onClick={toggleDownload(currentSong.id)} className={`${isDownloaded ? 'text-green-500' : 'text-zinc-400'} flex flex-col items-center gap-1`}>
+                 <button onClick={() => toggleDownload(currentSong.id)} className={`${isDownloaded ? 'text-green-500' : 'text-zinc-400'} flex flex-col items-center gap-1`}>
                     <Icon name={isDownloaded ? "downloaded" : "download"} className="w-5 h-5" />
                     <span className="text-[10px] uppercase tracking-wider">Baixar</span>
                  </button>
@@ -269,7 +268,7 @@ export const Player: React.FC<PlayerProps> = ({
         {/* Volume & Extras (Desktop Only) */}
         <div className="hidden md:flex items-center justify-end w-1/3 space-x-3" onClick={(e) => e.stopPropagation()}>
           <button 
-            onClick={toggleDownload(currentSong.id)}
+            onClick={() => toggleDownload(currentSong.id)}
             className={`ml-2 ${isDownloaded ? 'text-green-500' : 'text-zinc-500 hover:text-white'}`}
           >
              <Icon name={isDownloaded ? "downloaded" : "download"} className="w-5 h-5" />

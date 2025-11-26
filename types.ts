@@ -30,6 +30,21 @@ export interface Playlist {
   isUserCreated?: boolean; // Distinguish between curated and user playlists
 }
 
+export type ChristianFaith = 'catholic' | 'evangelical';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  isPremium: boolean;
+  isTrial?: boolean; // Indicates if they are in the 24h free period
+  trialEndsAt?: Date; // Timestamp for when the trial ends
+  avatarUrl?: string;
+  birthdate?: string; // ISO Date string YYYY-MM-DD
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_say';
+  faith?: ChristianFaith; // Personalization based on denomination
+}
+
 export enum PlaybackState {
   PAUSED,
   PLAYING,
@@ -51,6 +66,8 @@ export interface PlayerContextType {
   toggleOfflineMode: () => void;
   downloadedSongs: Set<string>;
   toggleDownload: (songId: string) => void;
+  favoriteSongs: Set<string>;
+  toggleFavorite: (songId: string) => void;
   // Lyrics Control
   showLyrics: boolean;
   toggleLyrics: () => void;

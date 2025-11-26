@@ -9,9 +9,11 @@ interface SearchProps {
   onPlayWithLyrics: (song: Song) => void;
   onAddToPlaylist: (song: Song) => void;
   isOffline: boolean;
+  favoriteSongs: Set<string>;
+  toggleFavorite: (songId: string) => void;
 }
 
-export const Search: React.FC<SearchProps> = ({ songs, onPlay, onPlayWithLyrics, onAddToPlaylist, isOffline }) => {
+export const Search: React.FC<SearchProps> = ({ songs, onPlay, onPlayWithLyrics, onAddToPlaylist, isOffline, favoriteSongs, toggleFavorite }) => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<Song[]>([]);
@@ -106,6 +108,13 @@ export const Search: React.FC<SearchProps> = ({ songs, onPlay, onPlayWithLyrics,
                 <div className="hidden md:block text-sm text-zinc-500 mr-8">{song.album}</div>
                 
                 <div className="flex items-center gap-2">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); toggleFavorite(song.id); }}
+                      className={`p-2 ${favoriteSongs.has(song.id) ? 'text-green-500' : 'text-zinc-500 hover:text-white'}`}
+                    >
+                      <Icon name={favoriteSongs.has(song.id) ? "heart-filled" : "heart"} className="w-5 h-5" />
+                    </button>
+
                     {song.lyrics && (
                         <button 
                             onClick={(e) => { e.stopPropagation(); onPlayWithLyrics(song); }}

@@ -25,6 +25,15 @@
         background: rgba(24, 24, 27, 0.7);
         backdrop-filter: blur(10px);
       }
+      
+      /* Utility to hide scrollbar but allow scrolling */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
     </style>
   <script type="importmap">
 {

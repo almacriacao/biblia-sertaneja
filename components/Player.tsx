@@ -18,7 +18,9 @@ export const Player: React.FC<PlayerProps> = ({
   downloadedSongs,
   toggleDownload,
   showLyrics,
-  toggleLyrics
+  toggleLyrics,
+  favoriteSongs,
+  toggleFavorite
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -26,6 +28,7 @@ export const Player: React.FC<PlayerProps> = ({
 
   const isPlaying = playbackState === PlaybackState.PLAYING;
   const isDownloaded = downloadedSongs.has(currentSong.id);
+  const isFavorite = favoriteSongs.has(currentSong.id);
   const hasLyrics = !!currentSong.lyrics;
 
   const handleShare = (e?: React.MouseEvent) => {
@@ -47,12 +50,12 @@ export const Player: React.FC<PlayerProps> = ({
     <>
       {/* Full Screen Expanded Player (Mobile) */}
       {isExpanded && (
-        <div className="fixed inset-0 z-[100] bg-zinc-900 flex flex-col text-white animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-0 z-[100] bg-zinc-900 flex flex-col text-white animate-in slide-in-from-bottom duration-300 h-[100dvh] overflow-y-auto">
            {/* Background gradient mesh simulation */}
            <div className="absolute inset-0 bg-gradient-to-b from-green-900/20 to-black pointer-events-none" />
            
            {/* Header */}
-           <div className="relative z-10 flex items-center justify-between p-6 pt-12"> 
+           <div className="relative z-10 flex items-center justify-between p-6 pt-8 min-h-[80px]"> 
               <button onClick={() => setIsExpanded(false)} className="text-zinc-100">
                  <Icon name="chevron-down" className="w-8 h-8" />
               </button>
@@ -65,25 +68,28 @@ export const Player: React.FC<PlayerProps> = ({
               </button>
            </div>
 
-           {/* Album Art */}
-           <div className="relative z-10 flex-1 flex items-center justify-center p-8">
-              <img src={currentSong.coverUrl} className="w-full aspect-square object-cover rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)]" />
+           {/* Album Art - Responsive Height */}
+           <div className="relative z-10 flex-1 flex items-center justify-center p-6 max-h-[45vh]">
+              <img src={currentSong.coverUrl} className="h-full w-auto aspect-square object-cover rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)]" />
            </div>
 
            {/* Info & Main Controls */}
-           <div className="relative z-10 px-8 pb-12">
-              <div className="flex justify-between items-end mb-8">
-                 <div>
-                    <h2 className="text-2xl font-bold text-white leading-tight mb-1">{currentSong.title}</h2>
-                    <p className="text-lg text-green-500 font-medium">{currentSong.bibleReference}</p>
+           <div className="relative z-10 px-8 pb-12 flex flex-col justify-end min-h-fit">
+              <div className="flex justify-between items-end mb-6">
+                 <div className="flex-1 mr-4">
+                    <h2 className="text-2xl font-bold text-white leading-tight mb-1 line-clamp-2">{currentSong.title}</h2>
+                    <p className="text-lg text-green-500 font-medium truncate">{currentSong.bibleReference}</p>
                  </div>
-                 <button onClick={toggleDownload(currentSong.id)} className={`${isDownloaded ? 'text-green-500' : 'text-zinc-400'} p-2`}>
-                    <Icon name={isDownloaded ? "downloaded" : "download"} className="w-8 h-8" />
+                 <button 
+                   onClick={(e) => { e.stopPropagation(); toggleFavorite(currentSong.id); }} 
+                   className={`p-2 ${isFavorite ? 'text-green-500' : 'text-zinc-400'}`}
+                 >
+                    <Icon name={isFavorite ? "heart-filled" : "heart"} className="w-8 h-8" />
                  </button>
               </div>
 
               {/* Progress */}
-              <div className="mb-8 group">
+              <div className="mb-6 group">
                 <input 
                     type="range" 
                     min={0} 
@@ -99,32 +105,37 @@ export const Player: React.FC<PlayerProps> = ({
               </div>
 
               {/* Controls */}
-              <div className="flex justify-between items-center mb-10">
+              <div className="flex justify-between items-center mb-8">
                  <button className="text-zinc-400 hover:text-white"><Icon name="shuffle" className="w-6 h-6" /></button>
                  
                  <button onClick={prevSong} className="text-white hover:scale-110 transition">
-                   <Icon name="prev" className="w-10 h-10" />
+                   <Icon name="prev" className="w-8 h-8" />
                  </button>
                  
                  <button 
                     onClick={togglePlay}
-                    className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 transition shadow-lg"
+                    className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 transition shadow-lg"
                   >
-                    <Icon name={isPlaying ? "pause" : "play"} className="w-10 h-10 fill-current ml-1" />
+                    <Icon name={isPlaying ? "pause" : "play"} className="w-8 h-8 fill-current ml-1" />
                   </button>
                  
                  <button onClick={nextSong} className="text-white hover:scale-110 transition">
-                    <Icon name="next" className="w-10 h-10" />
+                    <Icon name="next" className="w-8 h-8" />
                  </button>
                  
                  <button className="text-zinc-400 hover:text-white"><Icon name="repeat" className="w-6 h-6" /></button>
               </div>
 
               {/* Footer Actions */}
-              <div className="flex justify-between items-center px-4">
+              <div className="flex justify-between items-center px-2">
                  <button onClick={handleShare} className="text-zinc-400 hover:text-white flex flex-col items-center gap-1">
                     <Icon name="share" className="w-5 h-5" />
-                    <span className="text-[10px] uppercase tracking-wider">Compartilhar</span>
+                    <span className="text-[10px] uppercase tracking-wider">Zap</span>
+                 </button>
+
+                 <button onClick={toggleDownload(currentSong.id)} className={`${isDownloaded ? 'text-green-500' : 'text-zinc-400'} flex flex-col items-center gap-1`}>
+                    <Icon name={isDownloaded ? "downloaded" : "download"} className="w-5 h-5" />
+                    <span className="text-[10px] uppercase tracking-wider">Baixar</span>
                  </button>
                  
                  <button 
@@ -187,24 +198,39 @@ export const Player: React.FC<PlayerProps> = ({
             />
           </div>
           
-          <div className="overflow-hidden mr-2">
+          <div className="overflow-hidden mr-2 flex-1">
             <h4 className="text-white text-xs md:text-sm font-semibold truncate hover:underline">
               {currentSong.title}
             </h4>
             <p className="text-[10px] md:text-xs text-green-500 font-medium truncate">{currentSong.bibleReference}</p>
           </div>
+
+          {/* Desktop Heart */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); toggleFavorite(currentSong.id); }}
+            className={`hidden md:block ml-2 hover:scale-110 transition ${isFavorite ? 'text-green-500' : 'text-zinc-400 hover:text-white'}`}
+          >
+             <Icon name={isFavorite ? "heart-filled" : "heart"} className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Controls (Mobile - Simplified) */}
-        <div className="flex md:hidden items-center justify-end w-1/3 space-x-3">
+        {/* Controls (Mobile - Compact) */}
+        <div className="flex md:hidden items-center justify-end w-1/3 gap-3">
+           {/* Mobile Lyrics Button (Added as requested) */}
+           {hasLyrics && (
+             <button 
+                onClick={(e) => { e.stopPropagation(); toggleLyrics(); }}
+                className={`${showLyrics ? 'text-green-500' : 'text-zinc-400'}`}
+              >
+                <Icon name="mic" className="w-5 h-5" />
+             </button>
+           )}
+
            <button 
               onClick={(e) => { e.stopPropagation(); togglePlay(); }}
               className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black"
             >
               <Icon name={isPlaying ? "pause" : "play"} className="w-5 h-5 ml-0.5" />
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); nextSong(); }} className="text-zinc-400">
-               <Icon name="next" className="w-6 h-6" />
             </button>
         </div>
 

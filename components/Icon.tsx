@@ -1,7 +1,8 @@
+
 import React from 'react';
 
 interface IconProps {
-  name: 'home' | 'search' | 'library' | 'play' | 'pause' | 'next' | 'prev' | 'heart' | 'download' | 'downloaded' | 'volume' | 'menu' | 'sparkles' | 'lock' | 'plus' | 'check' | 'list' | 'close' | 'trash' | 'settings' | 'upload' | 'chart' | 'edit' | 'image' | 'music' | 'mic' | 'share' | 'chevron-down' | 'shuffle' | 'repeat';
+  name: 'home' | 'search' | 'library' | 'play' | 'pause' | 'next' | 'prev' | 'heart' | 'heart-filled' | 'download' | 'downloaded' | 'volume' | 'menu' | 'sparkles' | 'lock' | 'plus' | 'check' | 'list' | 'close' | 'trash' | 'settings' | 'upload' | 'chart' | 'edit' | 'image' | 'music' | 'mic' | 'share' | 'chevron-down' | 'shuffle' | 'repeat' | 'user' | 'logout' | 'login' | 'calendar' | 'mail';
   className?: string;
 }
 
@@ -23,6 +24,8 @@ export const Icon: React.FC<IconProps> = ({ name, className = "w-6 h-6" }) => {
       return <svg className={className} fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>;
     case 'heart':
       return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>;
+    case 'heart-filled':
+      return <svg className={className} fill="currentColor" viewBox="0 0 24 24" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
     case 'download':
       return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>;
     case 'downloaded':
@@ -65,6 +68,16 @@ export const Icon: React.FC<IconProps> = ({ name, className = "w-6 h-6" }) => {
       return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" /></svg>;
     case 'repeat':
       return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>;
+    case 'user':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
+    case 'logout':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
+    case 'login':
+      return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>;
+    case 'calendar':
+        return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
+    case 'mail':
+        return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>;
     default:
       return <div />;
   }

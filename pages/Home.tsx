@@ -38,8 +38,8 @@ export const Home: React.FC<HomeProps> = ({
   const t = APP_TEXT.home;
   const userFaith = user?.faith || 'evangelical';
   
-  // Dynamic Text Logic
-  const greeting = t.getGreeting(user?.faith, new Date().getHours());
+  // Dynamic Text Logic - NOW PASSING USER NAME
+  const greeting = t.getGreeting(user?.faith, new Date().getHours(), user?.name);
   const tips = t.getTips(user?.faith);
 
   // Data Slicing
@@ -116,7 +116,7 @@ export const Home: React.FC<HomeProps> = ({
 
   // STANDARD ONLINE VIEW
   return (
-    <div className="p-4 md:p-8 pb-32 overflow-y-auto h-full bg-gradient-to-b from-zinc-900 to-black scrollbar-hide">
+    <div className="p-4 md:p-8 pb-32 overflow-y-auto h-full bg-gradient-to-b from-blue-950 to-black scrollbar-hide">
       
       {/* Header */}
       <h2 className="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-white tracking-tight">
@@ -128,13 +128,13 @@ export const Home: React.FC<HomeProps> = ({
          {/* Tip 1: Create Playlist */}
          <div 
           onClick={() => onTipAction('create_playlist')}
-          className="bg-gradient-to-br from-zinc-800 to-zinc-900 p-3 md:p-4 rounded-lg md:rounded-xl border border-zinc-800 hover:border-green-500 transition group cursor-pointer active:scale-95"
+          className="bg-gradient-to-br from-zinc-800/60 to-zinc-900/60 backdrop-blur-sm p-3 md:p-4 rounded-lg md:rounded-xl border border-white/10 hover:border-green-500 transition group cursor-pointer active:scale-95"
          >
             <div className="flex items-start justify-between mb-1 md:mb-2">
                <div className="bg-green-500/20 p-1.5 md:p-2 rounded-full text-green-500">
                   <Icon name="list" className="w-4 h-4 md:w-5 md:h-5" />
                </div>
-               <span className="text-[9px] md:text-[10px] font-bold uppercase bg-zinc-950 text-zinc-500 px-1.5 md:px-2 py-0.5 md:py-1 rounded">{tips.playlist.tag}</span>
+               <span className="text-[9px] md:text-[10px] font-bold uppercase bg-black/40 text-zinc-400 px-1.5 md:px-2 py-0.5 md:py-1 rounded">{tips.playlist.tag}</span>
             </div>
             <h4 className="font-bold text-white text-xs md:text-base mb-0.5 md:mb-1 group-hover:text-green-400 transition">{tips.playlist.title}</h4>
             <p className="text-[10px] md:text-xs text-zinc-400 leading-relaxed hidden md:block">{tips.playlist.desc}</p>
@@ -144,13 +144,13 @@ export const Home: React.FC<HomeProps> = ({
          {/* Tip 2: Share */}
          <div 
           onClick={() => onTipAction('share')}
-          className="bg-gradient-to-br from-zinc-800 to-zinc-900 p-3 md:p-4 rounded-lg md:rounded-xl border border-zinc-800 hover:border-green-500 transition group cursor-pointer active:scale-95"
+          className="bg-gradient-to-br from-zinc-800/60 to-zinc-900/60 backdrop-blur-sm p-3 md:p-4 rounded-lg md:rounded-xl border border-white/10 hover:border-green-500 transition group cursor-pointer active:scale-95"
          >
             <div className="flex items-start justify-between mb-1 md:mb-2">
                <div className="bg-green-500/20 p-1.5 md:p-2 rounded-full text-green-500">
                   <Icon name="share" className="w-4 h-4 md:w-5 md:h-5" />
                </div>
-               <span className="text-[9px] md:text-[10px] font-bold uppercase bg-zinc-950 text-zinc-500 px-1.5 md:px-2 py-0.5 md:py-1 rounded">{tips.share.tag}</span>
+               <span className="text-[9px] md:text-[10px] font-bold uppercase bg-black/40 text-zinc-400 px-1.5 md:px-2 py-0.5 md:py-1 rounded">{tips.share.tag}</span>
             </div>
             <h4 className="font-bold text-white text-xs md:text-base mb-0.5 md:mb-1 group-hover:text-green-400 transition">{tips.share.title}</h4>
             <p className="text-[10px] md:text-xs text-zinc-400 leading-relaxed hidden md:block">{tips.share.desc}</p>
@@ -160,13 +160,13 @@ export const Home: React.FC<HomeProps> = ({
           {/* Tip 3: Offline */}
           <div 
             onClick={() => onTipAction('offline')}
-            className="bg-gradient-to-br from-zinc-800 to-zinc-900 p-3 md:p-4 rounded-lg md:rounded-xl border border-zinc-800 hover:border-green-500 transition group cursor-pointer hidden lg:block active:scale-95"
+            className="bg-gradient-to-br from-zinc-800/60 to-zinc-900/60 backdrop-blur-sm p-3 md:p-4 rounded-lg md:rounded-xl border border-white/10 hover:border-green-500 transition group cursor-pointer hidden lg:block active:scale-95"
           >
             <div className="flex items-start justify-between mb-2">
                <div className="bg-green-500/20 p-2 rounded-full text-green-500">
                   <Icon name="download" className="w-5 h-5" />
                </div>
-               <span className="text-[10px] font-bold uppercase bg-zinc-950 text-zinc-500 px-2 py-1 rounded">{tips.offline.tag}</span>
+               <span className="text-[10px] font-bold uppercase bg-black/40 text-zinc-400 px-2 py-1 rounded">{tips.offline.tag}</span>
             </div>
             <h4 className="font-bold text-white mb-1 group-hover:text-green-400 transition">{tips.offline.title}</h4>
             <p className="text-xs text-zinc-400 leading-relaxed">{tips.offline.desc}</p>
@@ -184,7 +184,7 @@ export const Home: React.FC<HomeProps> = ({
             <div 
               key={song.id} 
               onClick={() => onPlay(song)}
-              className="group relative bg-zinc-900 rounded-lg overflow-hidden hover:bg-zinc-800 transition cursor-pointer flex items-center md:items-stretch h-14 md:h-auto"
+              className="group relative bg-white/5 hover:bg-white/10 rounded-lg overflow-hidden transition cursor-pointer flex items-center md:items-stretch h-14 md:h-auto"
             >
               <div className="w-14 h-14 md:w-20 md:h-20 flex-shrink-0 relative">
                  <img src={song.coverUrl} alt={song.title} className="w-full h-full object-cover" />
@@ -213,7 +213,7 @@ export const Home: React.FC<HomeProps> = ({
             <div 
               key={album.id} 
               onClick={() => onOpenAlbum(album)}
-              className="flex-none w-36 md:w-48 group bg-transparent md:bg-zinc-900/50 p-0 md:p-4 rounded-md hover:bg-zinc-800 transition cursor-pointer relative snap-start"
+              className="flex-none w-36 md:w-48 group bg-transparent md:bg-white/5 p-0 md:p-4 rounded-md hover:bg-white/10 transition cursor-pointer relative snap-start"
             >
               <div className="relative mb-2">
                 <img src={album.coverUrl} alt={album.title} className="w-full aspect-square object-cover rounded shadow-md" />
@@ -258,7 +258,7 @@ export const Home: React.FC<HomeProps> = ({
       </section>
 
       {/* Architecture Footer */}
-      <section className="mt-8 md:mt-12 py-6 md:py-8 border-t border-zinc-900">
+      <section className="mt-8 md:mt-12 py-6 md:py-8 border-t border-white/10">
         <div className="flex items-center justify-center gap-2 opacity-50 hover:opacity-100 transition text-[10px] md:text-xs text-zinc-500">
           <Icon name="lock" className="w-3 h-3" />
           <span>{APP_TEXT.general.footer}</span>

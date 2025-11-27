@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { PlaybackState, Song, Playlist, Album, User } from './types';
 import { Sidebar } from './components/Sidebar';
@@ -10,6 +11,7 @@ import { Library } from './pages/Library';
 import { Welcome } from './pages/Welcome';
 import { Auth } from './pages/Auth';
 import { Profile } from './pages/Profile';
+import { Pricing } from './pages/Pricing'; // New Import
 import { SONGS, INITIAL_PLAYLISTS, ALBUMS } from './constants';
 import { Icon } from './components/Icon';
 import { Logo } from './components/Logo';
@@ -76,6 +78,10 @@ export default function App() {
     setPlaybackState(PlaybackState.PAUSED);
     setIsOfflineMode(false);
     setActiveTab('home');
+  };
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUser(updatedUser);
   };
 
   // --- RESTRICTION HANDLERS ---
@@ -450,7 +456,12 @@ export default function App() {
             <Profile 
                 user={user} 
                 onLogout={handleLogout}
+                onNavigateToPricing={() => setActiveTab('pricing')}
+                onUpdateUser={handleUpdateUser}
             />
+        )}
+        {activeTab === 'pricing' && (
+            <Pricing onBack={() => setActiveTab('profile')} />
         )}
       </main>
 
@@ -484,6 +495,7 @@ export default function App() {
           if (tab !== 'library') setViewingAlbum(null);
         }} 
         user={user}
+        onCreatePlaylist={() => { requireUser(createPlaylist); setActiveTab('library'); }}
       />
 
       {/* UPSELL MODAL (For Guests) */}

@@ -123,10 +123,14 @@ export const Auth: React.FC<AuthProps> = ({ onSuccess, onBack, initialMode = 'lo
                 {loading ? "Entrando..." : t.actionLogin}
               </button>
             </form>
-            <div className="mt-8 text-center">
-              <button onClick={() => setIsRegister(true)} className="text-white font-bold text-sm border border-zinc-700 rounded-full px-6 py-2">
-                Não tem conta? Cadastre-se
+            
+            <div className="mt-8 text-center flex flex-col items-center">
+              <button onClick={() => setIsRegister(true)} className="w-full text-white font-bold text-sm border border-zinc-700 rounded-full px-6 py-3 hover:bg-zinc-900 transition">
+                {t.toggleRegister}
               </button>
+              <p className="text-zinc-500 text-[10px] mt-2 font-medium uppercase tracking-wide">
+                 {t.toggleRegisterSub}
+              </p>
             </div>
           </div>
         </div>

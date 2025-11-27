@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '../types';
 import { Icon } from '../components/Icon';
 import { APP_TEXT } from '../content';
@@ -7,10 +7,41 @@ import { APP_TEXT } from '../content';
 interface ProfileProps {
   user: User;
   onLogout: () => void;
+  onNavigateToPricing: () => void;
+  onUpdateUser: (updatedUser: User) => void;
 }
 
-export const Profile: React.FC<ProfileProps> = ({ user, onLogout }) => {
+export const Profile: React.FC<ProfileProps> = ({ user, onLogout, onNavigateToPricing, onUpdateUser }) => {
   const t = APP_TEXT.profile;
+
+  // Edit Mode State
+  const [isEditing, setIsEditing] = useState(false);
+  
+  // Form State
+  const [formData, setFormData] = useState<Partial<User>>({
+     name: user.name,
+     birthdate: user.birthdate,
+     gender: user.gender,
+     faith: user.faith
+  });
+
+  const handleSave = () => {
+    // Merge new data with existing user object
+    const updatedUser = { ...user, ...formData };
+    onUpdateUser(updatedUser);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    // Revert changes
+    setFormData({
+        name: user.name,
+        birthdate: user.birthdate,
+        gender: user.gender,
+        faith: user.faith
+    });
+    setIsEditing(false);
+  };
 
   // Calculate trial time remaining if applicable
   const getTrialTimeRemaining = () => {
@@ -30,24 +61,63 @@ export const Profile: React.FC<ProfileProps> = ({ user, onLogout }) => {
       <div className="max-w-3xl mx-auto">
         
         {/* Header */}
-        <div className="flex items-center gap-6 mb-10">
-           <img 
-            src={user.avatarUrl} 
-            alt={user.name} 
-            className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-zinc-800 shadow-xl"
-           />
-           <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{user.name}</h1>
-              <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 text-center md:text-left">
+           <div className="relative group">
+              <img 
+                src={user.avatarUrl} 
+                alt={user.name} 
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-zinc-800 shadow-xl"
+              />
+              {isEditing && (
+                 <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center cursor-pointer">
+                    <Icon name="edit" className="w-8 h-8 text-white" />
+                 </div>
+              )}
+           </div>
+           
+           <div className="flex-1">
+              {isEditing ? (
+                  <input 
+                    type="text" 
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="text-3xl md:text-4xl font-bold text-white bg-zinc-800 border border-zinc-700 rounded p-2 mb-2 w-full text-center md:text-left"
+                  />
+              ) : (
+                  <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{user.name}</h1>
+              )}
+              
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${user.isPremium ? 'bg-green-900/40 text-green-400 border-green-800' : 'bg-zinc-800 text-zinc-400 border-zinc-700'}`}>
                     {user.isTrial ? t.planTrial : (user.isPremium ? t.planPremium : t.planFree)}
                  </span>
-                 {user.faith && (
+                 
+                 {/* Faith Badge */}
+                 {!isEditing && user.faith && (
                     <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-900/40 text-blue-400 border border-blue-800">
                         {user.faith === 'catholic' ? 'Católica' : 'Evangélica'}
                     </span>
                  )}
               </div>
+           </div>
+
+           {/* Edit Actions */}
+           <div className="flex gap-2">
+             {isEditing ? (
+                <>
+                    <button onClick={handleCancel} className="px-4 py-2 rounded-full bg-zinc-800 text-white font-bold text-sm hover:bg-zinc-700 transition">
+                        {t.cancelEdit}
+                    </button>
+                    <button onClick={handleSave} className="px-4 py-2 rounded-full bg-green-600 text-white font-bold text-sm hover:bg-green-500 transition shadow-lg shadow-green-900/20">
+                        {t.saveProfile}
+                    </button>
+                </>
+             ) : (
+                <button onClick={() => setIsEditing(true)} className="px-4 py-2 rounded-full border border-zinc-700 text-zinc-400 hover:text-white hover:border-white font-bold text-sm transition flex items-center gap-2">
+                    <Icon name="edit" className="w-4 h-4" />
+                    {t.editProfile}
+                </button>
+             )}
            </div>
         </div>
 
@@ -65,28 +135,63 @@ export const Profile: React.FC<ProfileProps> = ({ user, onLogout }) => {
                     <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">E-mail</label>
                     <div className="flex items-center gap-3 text-zinc-300">
                         <Icon name="mail" className="w-4 h-4" />
-                        {user.email}
+                        <span className="opacity-70 cursor-not-allowed" title="E-mail não pode ser alterado">{user.email}</span>
                     </div>
                  </div>
                  
-                 {user.birthdate && (
-                    <div>
-                        <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">Nascimento</label>
-                        <div className="flex items-center gap-3 text-zinc-300">
-                            <Icon name="calendar" className="w-4 h-4" />
-                            {new Date(user.birthdate).toLocaleDateString('pt-BR')}
-                        </div>
+                 <div>
+                    <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">Nascimento</label>
+                    <div className="flex items-center gap-3 text-zinc-300">
+                        <Icon name="calendar" className="w-4 h-4" />
+                        {isEditing ? (
+                            <input 
+                                type="date" 
+                                value={formData.birthdate} 
+                                onChange={(e) => setFormData({...formData, birthdate: e.target.value})}
+                                className="bg-zinc-800 text-white p-1 rounded border border-zinc-700 text-sm"
+                            />
+                        ) : (
+                            <span>{user.birthdate ? new Date(user.birthdate).toLocaleDateString('pt-BR') : 'Não informado'}</span>
+                        )}
                     </div>
-                 )}
+                 </div>
 
-                 {user.gender && (
+                 <div>
+                    <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">Gênero</label>
+                    <div className="text-zinc-300 capitalize">
+                        {isEditing ? (
+                            <select 
+                                value={formData.gender}
+                                onChange={(e) => setFormData({...formData, gender: e.target.value as any})}
+                                className="bg-zinc-800 text-white p-1 rounded border border-zinc-700 text-sm w-full"
+                            >
+                                <option value="female">Feminino</option>
+                                <option value="male">Masculino</option>
+                                <option value="other">Outro</option>
+                                <option value="prefer_not_say">Prefiro não dizer</option>
+                            </select>
+                        ) : (
+                            <span>
+                                {user.gender === 'prefer_not_say' ? 'Prefiro não dizer' : 
+                                user.gender === 'female' ? 'Feminino' : 
+                                user.gender === 'male' ? 'Masculino' : 'Outro'}
+                            </span>
+                        )}
+                    </div>
+                 </div>
+
+                 {/* Faith Editor (Only visible in edit mode here for UX) */}
+                 {isEditing && (
                     <div>
-                        <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">Gênero</label>
-                        <div className="text-zinc-300 capitalize">
-                           {user.gender === 'prefer_not_say' ? 'Prefiro não dizer' : 
-                            user.gender === 'female' ? 'Feminino' : 
-                            user.gender === 'male' ? 'Masculino' : 'Outro'}
-                        </div>
+                        <label className="text-xs text-zinc-500 uppercase font-bold block mb-1">Fé Cristã</label>
+                        <select 
+                            value={formData.faith}
+                            onChange={(e) => setFormData({...formData, faith: e.target.value as any})}
+                            className="bg-zinc-800 text-white p-1 rounded border border-zinc-700 text-sm w-full"
+                        >
+                            <option value="evangelical">Evangélica</option>
+                            <option value="catholic">Católica</option>
+                        </select>
                     </div>
                  )}
               </div>
@@ -121,13 +226,21 @@ export const Profile: React.FC<ProfileProps> = ({ user, onLogout }) => {
                         {t.cancelBtn}
                     </button>
                  ) : (
-                    <button onClick={() => alert("Funcionalidade simulada: Redirecionando para pagamento...")} className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-500 transition">
+                    <button 
+                        onClick={onNavigateToPricing} 
+                        className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-500 transition flex items-center justify-center gap-2 animate-pulse"
+                    >
+                        <Icon name="sparkles" className="w-4 h-4" />
                         {t.subscribeBtn}
                     </button>
                  )}
                  
                  {user.isTrial && (
-                    <button onClick={() => alert("Funcionalidade simulada: Plano contratado!")} className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-500 transition shadow-lg shadow-green-900/20">
+                    <button 
+                        onClick={onNavigateToPricing} 
+                        className="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-500 transition shadow-lg shadow-green-900/20 flex items-center justify-center gap-2"
+                    >
+                       <Icon name="sparkles" className="w-4 h-4" />
                        {t.subscribeBtn}
                     </button>
                  )}

@@ -10,13 +10,14 @@ export const APP_TEXT = {
   },
   welcome: {
     heroTitle: "Bíblia",
-    heroSubtitle: "Histórias da Bíblia transformadas em canções sertanejas.",
-    // Updated Badge Texts
-    offerBadgePart1: "Cadastre-se e ganhe",
-    offerBadgePart2: "24h de premium grátis com acesso total",
-    offerBadgeSub: "Sem compromisso e sem cartão",
+    heroSubtitle: "Histórias da Bíblia transformadas em canções sertanejas.", // Tagline
     
-    ctaLogin: "Já tenho conta / Entrar", // Updated button text
+    // Updated Hierarchy - No more banner context
+    offerTitle: "Cadastre-se e ganhe 24H de Premium Grátis com acesso total",
+    offerSubtitle: "Sem compromisso e sem cartão",
+    
+    ctaRegister: "24h de Premium Grátis",
+    ctaLogin: "Já tenho conta / Entrar",
     ctaGuest: "Ouvir trechos de Graça",
     footerTagline: "Música • Fé • Tradição"
   },
@@ -73,19 +74,21 @@ export const APP_TEXT = {
     actionRegister: "Criar Conta",
     actionNext: "Próximo",
     toggleLogin: "Já tem uma conta?",
-    toggleRegister: "Quer 24h de Premium grátis?",
+    toggleRegister: "Não tem conta? Cadastre-se para 24h de Premium Grátis",
+    toggleRegisterSub: "Sem compromisso e sem cartão",
     linkLogin: "Fazer Login",
     linkRegister: "Resgatar Oferta",
     terms: "Ao continuar, você concorda com os Termos de Uso e Política de Privacidade da Bíblia Sertaneja."
   },
   home: {
     // Dynamic Greeting Generator
-    getGreeting: (faith: ChristianFaith | undefined, hour: number) => {
+    getGreeting: (faith: ChristianFaith | undefined, hour: number, userName?: string) => {
       const isCatholic = faith === 'catholic';
+      const namePart = userName ? `, ${userName.split(' ')[0]}` : ''; // Get first name
       
-      if (hour < 12) return isCatholic ? "Bom dia, a paz de Cristo" : "Bom dia, a paz do Senhor";
-      if (hour < 18) return isCatholic ? "Boa tarde, irmão(ã)" : "Boa tarde, varão(oa)";
-      return isCatholic ? "Boa noite, fique com Deus" : "Boa noite, graça e paz";
+      if (hour < 12) return isCatholic ? `Bom dia${namePart}` : `Bom dia${namePart}`;
+      if (hour < 18) return `Boa tarde${namePart}`;
+      return `Boa noite${namePart}`;
     },
     sections: {
       highlights: "Destaques",
@@ -153,15 +156,43 @@ export const APP_TEXT = {
   profile: {
     title: "Minha Conta",
     personalInfo: "Dados Pessoais",
+    editProfile: "Editar Perfil",
+    saveProfile: "Salvar Alterações",
+    cancelEdit: "Cancelar",
     subscription: "Assinatura",
     plan: "Plano Atual",
     planFree: "Gratuito (Limitado)",
     planTrial: "Premium (Período de Teste)",
     planPremium: "Premium (Mensal)",
     validUntil: "Válido até",
-    subscribeBtn: "Assinar Premium Definitivo",
+    subscribeBtn: "Assinar Premium com Desconto",
     cancelBtn: "Cancelar Assinatura",
     logoutBtn: "Sair da Conta"
+  },
+  pricing: {
+    title: "Escolha seu Plano",
+    subtitle: "Apoie o projeto e tenha a melhor experiência.",
+    monthly: "Mensal",
+    annual: "Anual",
+    saveLabel: "Economize 25%",
+    fullPrice: "R$ 19,90",
+    discountPrice: "R$ 12,90",
+    annualPrice: "R$ 119,90",
+    annualInstallment: "ou 12x de R$ 9,90",
+    features: {
+      fullAccess: "Acesso às músicas completas",
+      offline: "Baixe músicas para ouvir offline",
+      playlists: "Crie playlists ilimitadas",
+      unlimited: "Pule quantas faixas quiser",
+      sound: "Áudio em Alta Qualidade",
+      support: "Apoie a missão Bíblia Sertaneja"
+    },
+    freeFeatures: {
+      limited: "Acesso limitado ao catálogo",
+      snippets: "Escute apenas trechos das músicas"
+    },
+    cta: "Quero Aproveitar o Desconto",
+    secure: "Pagamento 100% Seguro via PIX ou Cartão"
   },
   upsell: {
     title: "Libere o Premium por 24h!",
